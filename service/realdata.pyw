@@ -13,7 +13,7 @@ class TaskBarIcon(wx.TaskBarIcon):
     def __init__(self, frame):
         self.frame = frame
         super(TaskBarIcon, self).__init__()
-        self.set_icon('..\web\images\favicon.ico')
+        self.set_icon('../web/images/favicon.ico')
 
     def CreatePopupMenu(self):
         menu = wx.Menu()
