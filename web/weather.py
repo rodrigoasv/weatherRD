@@ -18,12 +18,12 @@ dictMonths = {
         11: "November",
         12: "December"
     }
+cnx = mysql.connector.connect(user='root', password='root',
+                              host='localhost',
+                              database='weather', charset="utf8", use_unicode=True)
 
 
 def add_months_for_filter():
-    cnx = mysql.connector.connect(user='root', password='root',
-                                  host='localhost',
-                                  database='weather', charset="utf8", use_unicode=True)
     cursor = cnx.cursor()
     cursor.execute("select distinct EXTRACT(year from date), EXTRACT(month from date) from temperature")
     available_months = cursor.fetchall()
@@ -38,9 +38,6 @@ def add_months_for_filter():
 
 
 def get_table(q):
-    cnx = mysql.connector.connect(user='root', password='root',
-                                  host='localhost',
-                                  database='weather', charset="utf8", use_unicode=True)
     cursor = cnx.cursor()
     cursor.execute(q)
     # get header and rows

@@ -91,10 +91,10 @@ class MyThread (threading.Thread):
         minute = date_and_time[20:22]
         return [year, month, day, hour, minute]
 
-    def insert_new_date(self, location_id_to_insert, cursor2, db2, date2, date_time2, city, temp2):
-        sql_insert = "INSERT INTO temperature (min, dateTimeMin, max, dateTimeMax, date, fklocation) VALUES (" + \
+    def insert_new_date(self, location_id_to_insert, cursor2, db2, date2, date_time2, city, temp2, is_raining2):
+        sql_insert = "INSERT INTO temperature (min, dateTimeMin, max, dateTimeMax, date, fklocation, rain) VALUES (" + \
                      str(temp2) + ", \"" + date_time2 + "\", " + str(temp2) + ", \"" +\
-                     date_time2 + "\", \"" + str(date2) + "\", " + location_id_to_insert + ")"
+                     date_time2 + "\", \"" + str(date2) + "\", " + location_id_to_insert + ", " + is_raining2 + ")"
         self.logger.debug(sql_insert)
         try:
             cursor2.execute(sql_insert)
@@ -128,6 +128,7 @@ class MyThread (threading.Thread):
                         country = data["current_observation"]["observation_location"]["country_iso3166"]
                         temp = data["current_observation"]["temp_c"]
                         dateList = self.parse_date_time(data["current_observation"]["observation_time_rfc822"])
+                        rain = data["current_observation"]["weather"]
                         date = str(dateList[0]) + "-" + str(dateList[1]) + "-" + str(dateList[2])
                         date_time = date + " " + str(dateList[3]) + ":" + str(dateList[4])
 
@@ -137,10 +138,11 @@ class MyThread (threading.Thread):
                         self.logger.debug("temp = %s", temp)
                         self.logger.debug("date = %s-%s-%s", str(dateList[0]), str(dateList[1]), str(dateList[2]))
                         self.logger.debug("time = %s:%s", str(dateList[3]), str(dateList[4]))
+                        self.logger.debug("weather = %s", rain)
                     except Exception, e:
                         self.logger.error("Couldn't get data from wunderground: %s", str(e))
                         continue
-                    if float(temp) < -20.0:
+                    if float(temp) < -70.0:
                         self.logger.error("Wunderground reported %s temp. Assuming it's wrong and asking for"
                                           " a new temp", temp)
                         continue
@@ -162,15 +164,30 @@ class MyThread (threading.Thread):
                         # Checks if city exists
                         if len(locationId) > 0:
                             # City exists, now gets today's temperature
-                            sql = "SELECT temperature.idtemperature, temperature.min, temperature.max FROM" \
-                                  " temperature WHERE temperature.date=\"" + date + "\" AND temperature.fklocation=" +\
-                                  str(locationId[0][0])
+                            sql = "SELECT temperature.idtemperature, temperature.min, temperature.max," \
+                                  " temperature.rain FROM temperature WHERE temperature.date=\"" + date +\
+                                  "\" AND temperature.fklocation=" + str(locationId[0][0])
                             self.logger.debug(sql)
                             cursor.execute(sql)
                             tempData = cursor.fetchall()
                             self.logger.debug("tempData = %s", tempData)
                             # checks if there is temp for today
                             if len(tempData) > 0:
+                                # update whether or not it's raining today
+                                # rain => 1  ****   no rain => 0
+                                if tempData[0][3] == 0:
+                                    if rain == 'Rain' or rain == 'Drizzle':
+                                        sql = "UPDATE temperature SET rain=1 WHERE date=\"" + date +\
+                                              "\" AND temperature.fklocation=" + str(locationId[0][0])
+                                        self.logger.debug(sql)
+                                        try:
+                                            cursor.execute(sql)
+                                            db.commit()
+                                            self.logger.info("%s is %s", city, rain)
+                                        except Exception, e:
+                                            db.rollback()
+                                            self.logger.error("Something went wrong while updating min temp: %s", str(e))
+
                                 # update min or max values
                                 # checks temp min
                                 if temp < tempData[0][1]:
@@ -200,7 +217,7 @@ class MyThread (threading.Thread):
                                             self.logger.error("Something went wrong while updating max temp: %s", str(e))
                             else:
                                 # insert date with min and max values
-                                self.insert_new_date(str(locationId[0][0]), cursor, db, date, date_time, city, temp)
+                                self.insert_new_date(str(locationId[0][0]), cursor, db, date, date_time, city, temp, "0")
                         else:  # city does not exist
                             sql = "INSERT INTO location (location.city, location.country) VALUES (\"" + city +\
                                   "\", \"" + country + "\")"
@@ -214,7 +231,7 @@ class MyThread (threading.Thread):
                                 self.logger.error("Something went wrong adding city %s", city)
                                 self.logger.error(str(e))
                             # insert date with min and max values
-                            self.insert_new_date(str(cursor.lastrowid), cursor, db, date, date_time, city, temp)
+                            self.insert_new_date(str(cursor.lastrowid), cursor, db, date, date_time, city, temp, "0")
             if db is not None:
                 db.close()
             # to not have to wait for 15 min for the thread to exit, it breaks down to 15 sec and checks the flag

@@ -4,16 +4,16 @@ import sys
 from glob import glob
 data_files = [("Microsoft.VC90.CRT",
                glob(r'C:\Program Files\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT\*.*')),
-              '..\web\images\favicon.ico',
-              'realdata.xml']
+              r'..\web\images\favicon.ico',
+              r'realdata.xml']
 setup(data_files=data_files)
-sys.path.append("C:\\Program Files\\Microsoft Visual Studio 9.0\\VC\\redist\\x86\\Microsoft.VC90.CRT")
+sys.path.append(r'C:\Program Files\Microsoft Visual Studio 9.0\VC\redist\x86\Microsoft.VC90.CRT')
 
 setup(
     windows=[
         {
             "script": 'realdata.pyw',
-            "icon_resources": [(1, "..\web\images\favicon.ico")]
+            "icon_resources": [(1, r'..\web\images\favicon.ico')]
         }
     ],
       options={
