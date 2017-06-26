@@ -10,7 +10,8 @@ Technologies:
 - python
 - mysql
 - html, javascript, jquery, css
-- bootstrap templates
+- Bootstrap
+- Bootstrap Year Calendar
 
 Layers:
 - service

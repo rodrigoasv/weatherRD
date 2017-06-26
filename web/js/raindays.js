@@ -29,7 +29,9 @@ function addCities(filter){
 				}
 			});
 			$('#calendar').data('calendar').setMinDate(new Date(2017, 2, 1));
-			$('#calendar').data('calendar').setMaxDate(new Date());
+			var tomorrow = new Date();
+			tomorrow.setDate(tomorrow.getDate() + 1);
+			$('#calendar').data('calendar').setMaxDate(tomorrow);
 		}
 	});
 }
