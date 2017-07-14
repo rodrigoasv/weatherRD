@@ -62,9 +62,9 @@ current_month = datetime.datetime.now().strftime("%Y-%m")
 if len(sys.argv) == 2:
     if len(sys.argv[1]) == 7:
         current_month = sys.argv[1]
-query = "SELECT temp.date as 'Date', loc.city as 'City', temp.min as 'Temp Min'," \
-        " CAST(temp.dateTimeMin as time) as 'Time', temp.max as 'Temp Max'," \
-        " CAST(temp.dateTimeMax as time) as 'Time' FROM weather.temperature" \
+query = "SELECT temp.date as 'Date', loc.city as 'City', temp.min as 'Temp Min', temp.minfeels as 'Min Feels'," \
+        " CAST(temp.dateTimeMin as time) as 'Time', temp.max as 'Temp Max', temp.maxfeels as 'Max Feels'," \
+        " CAST(temp.dateTimeMax as time) as 'Time', temp.sky as 'Sky' FROM weather.temperature" \
         " as temp, weather.location as loc WHERE temp.fklocation=loc.idlocation AND temp.date LIKE '" + current_month +\
         "%' ORDER BY temp.date, loc.city"
 dropdown_selected = dictMonths[int(current_month[5:7])] + "-" + current_month[0:4]

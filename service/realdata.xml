@@ -11,7 +11,7 @@
         </city>
         <city>
             <name>Melbourne</name>
-            <link>http://api.wunderground.com/api/<key>/conditions/q/pws:YMML.json</link>
+            <link>http://api.wunderground.com/api/<key>/conditions/q/pws:IVCTALBE2.json</link>
         </city>
 		<city>
             <name>Melbourne</name>
@@ -23,7 +23,17 @@
         </city>
         <city>
             <name>Melbourne</name>
-            <link>http://api.wunderground.com/api/<key>/conditions/q/pws:IVCTALBE2.json</link>
+            <link>http://api.wunderground.com/api/<key>/conditions/q/pws:YMML.json</link>
         </city>
 	</wunderground>
+    <yahoo>
+        <city>
+            <name>Porto Alegre</name>
+            <link>http://query.yahooapis.com/v1/public/yql?q=select location, item.condition, wind.chill from weather.forecast where woeid&#61;455823 and u&#61;'c'&#38;format&#61;json</link>
+        </city>
+        <city>
+            <name>Melbourne</name>
+            <link>http://query.yahooapis.com/v1/public/yql?q=select location, item.condition, wind.chill from weather.forecast where woeid&#61;1103816 and u&#61;'c'&#38;format&#61;json</link>
+        </city>
+    </yahoo>
 </realdata>
