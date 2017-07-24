@@ -27,7 +27,7 @@ CREATE TABLE `location` (
   `city` varchar(45) NOT NULL,
   `country` varchar(45) NOT NULL,
   PRIMARY KEY (`idlocation`)
-) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -39,4 +39,4 @@ CREATE TABLE `location` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-06-08 16:12:59
+-- Dump completed on 2017-07-24 13:22:38

@@ -30,10 +30,14 @@ CREATE TABLE `temperature` (
   `fklocation` int(11) NOT NULL,
   `dateTimeMin` datetime DEFAULT NULL,
   `dateTimeMax` datetime DEFAULT NULL,
+  `rain` tinyint(1) NOT NULL DEFAULT '0',
+  `minfeels` double DEFAULT NULL,
+  `maxfeels` double DEFAULT NULL,
+  `sky` varchar(45) DEFAULT NULL,
   PRIMARY KEY (`idtemperature`,`fklocation`),
   KEY `fk_temperature_location_idx` (`fklocation`),
   CONSTRAINT `fk_temperature_location` FOREIGN KEY (`fklocation`) REFERENCES `location` (`idlocation`) ON DELETE NO ACTION ON UPDATE NO ACTION
-) ENGINE=InnoDB AUTO_INCREMENT=124 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=195 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -45,4 +49,4 @@ CREATE TABLE `temperature` (
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2017-06-08 16:12:59
+-- Dump completed on 2017-07-24 13:22:38

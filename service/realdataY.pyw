@@ -90,8 +90,12 @@ class MyThread (threading.Thread):
         year = my_list[3]
         hour = date_and_time[17:19]
         ampm = date_and_time[23:25]
-        if ampm == "PM":
-            hour = str(int(hour) + 12)
+        if hour == "12":
+            if ampm == "AM":
+                hour = "00"
+        else:
+            if ampm == "PM":
+                hour = str(int(hour) + 12)
         minute = date_and_time[20:22]
         return [year, month, day, hour, minute]
 
@@ -100,7 +104,7 @@ class MyThread (threading.Thread):
         sql_insert = "INSERT INTO temperature (min, minfeels, dateTimeMin, max, maxfeels, dateTimeMax, date," \
                      " fklocation, rain, sky) VALUES (" + str(temp2) + ", " + str(feels2) + ", \"" + date_time2 +\
                      "\", " + str(temp2) + ", " + str(feels2) + ", \"" + date_time2 + "\", \"" + str(date2) + "\", " +\
-                     location_id_to_insert + ", " + is_raining2 + ", " + sky2 + ")"
+                     location_id_to_insert + ", " + is_raining2 + ", \"" + sky2 + "\")"
         self.logger.debug(sql_insert)
         try:
             cursor2.execute(sql_insert)
@@ -134,15 +138,15 @@ class MyThread (threading.Thread):
             db2.rollback()
             self.logger.error("Something went wrong while updating sky: %s", str(e))
 
-    def update_temp(self, db2, cursor2, fieldtemp, temp2, fieldfeels, feels2, date_time2, date2, location_id2, city2):
+    def update_temp(self, db2, cursor2, fieldtemp, temp2, fieldfeels, feels2, fielddatetime, date_time2, date2, location_id2, city2):
         sql_update = "UPDATE temperature SET " + fieldtemp + "=" + str(temp2) + ", " + fieldfeels + "=" + feels2 + \
-              ", dateTimeMin=\"" + date_time2 + "\" WHERE date=\"" + \
+              ", " + fielddatetime + "=\"" + date_time2 + "\" WHERE date=\"" + \
               date2 + "\" AND temperature.fklocation=" + location_id2
         self.logger.debug(sql_update)
         try:
             cursor2.execute(sql_update)
             db2.commit()
-            self.logger.info("%s -> min temp updated! @ %s", city2, date_time2)
+            self.logger.info("%s -> %s temp updated! @ %s -> %s", city2, fieldtemp, date_time2, temp2)
         except Exception, e:
             db2.rollback()
             self.logger.error("Something went wrong while updating %s temp: %s", fieldtemp, str(e))
@@ -185,6 +189,7 @@ class MyThread (threading.Thread):
                         self.logger.debug("weather = %s", rain)
                     except Exception, e:
                         self.logger.error("Couldn't get data from yahoo: %s", str(e))
+                        self.logger.error(r.json())
                         continue
                     if float(temp) < -70.0:
                         self.logger.error("Yahoo reported %s temp. Assuming it's wrong and asking for"
@@ -226,12 +231,12 @@ class MyThread (threading.Thread):
                                 # update min or max values
                                 # checks temp min
                                 if float(temp) < tempData[0][1]:
-                                    self.update_temp(db, cursor, "min", str(temp), "minfeels", str(feels), date_time,
-                                                     date, str(locationId[0][0]), city)
+                                    self.update_temp(db, cursor, "min", str(temp), "minfeels", str(feels),
+                                                     "dateTimeMin", date_time, date, str(locationId[0][0]), city)
                                 else:
                                     if float(temp) > tempData[0][2]:
                                         self.update_temp(db, cursor, "max", str(temp), "maxfeels", str(feels),
-                                                         date_time, date, str(locationId[0][0]), city)
+                                                         "dateTimeMax", date_time, date, str(locationId[0][0]), city)
                             else:
                                 # insert date with min and max values
                                 self.insert_new_date(str(locationId[0][0]), cursor, db, date, date_time, city, temp,
