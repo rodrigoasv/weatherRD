@@ -4,7 +4,7 @@
 Author: Rodrigo Victor
 
 Description:
-This project was made as a need that I had to have real historic temperatures. I always have the feeling that the historic data showed on the weather web sites were not correct, so I created this to satisfy myself. In addition, I wanted to see the differences between min and max temperatures from different cities.
+This project was made as a need that I had to have real historic temperatures. I always had the feeling that the historic data showed on the weather web sites were not correct, so I've created this to satisfy myself. In addition, I wanted to see the differences between min and max temperatures from different cities.
 
 Technologies:
 - python
